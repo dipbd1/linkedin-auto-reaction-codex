@@ -8,7 +8,7 @@
       "name": "linkedin-engagement-navigator",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/linkedin-engagement-navigator"
       },
       "policy": {
         "installation": "AVAILABLE",

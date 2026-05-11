@@ -10,10 +10,10 @@ It works through your signed-in Chrome browser using the Codex Chrome plugin/ext
 
 This repository is packaged as a Codex plugin, not just a raw skill folder.
 
-- Plugin manifest: `.codex-plugin/plugin.json`
+- Plugin manifest: `plugins/linkedin-engagement-navigator/.codex-plugin/plugin.json`
 - Repo-local marketplace: `.agents/plugins/marketplace.json`
-- Bundled skill: `skills/linkedin-auto-reaction-codex/`
-- Install assets: `assets/icon.png`, `assets/logo.png`, `assets/screenshot-1.png`
+- Bundled skill: `plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/`
+- Install assets: `plugins/linkedin-engagement-navigator/assets/icon.png`, `plugins/linkedin-engagement-navigator/assets/logo.png`, `plugins/linkedin-engagement-navigator/assets/screenshot-1.png`
 
 Codex uses the plugin manifest to render the plugin card and the marketplace entry to discover and install it.
 
@@ -160,12 +160,12 @@ You can ask for stricter limits at the start of a session.
 
 ## Ledger CLI
 
-`skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` is the plugin's local memory and comment quality gate. Codex calls it during the workflow, and you can also run it manually.
+`plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` is the plugin's local memory and comment quality gate. Codex calls it during the workflow, and you can also run it manually.
 
 No package install is required:
 
 ```powershell
-python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --help
+python plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --help
 ```
 
 On some Windows Codex setups, `python` may not be on `PATH`. If it fails, use the Python executable reported by Codex dependency setup and substitute it for `python` in the examples below.
@@ -173,7 +173,7 @@ On some Windows Codex setups, `python` may not be on `PATH`. If it fails, use th
 ### Check Whether A Post Is Already Handled
 
 ```powershell
-python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json check `
+python plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json check `
   --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" --action comment
 ```
 
@@ -187,7 +187,7 @@ Exit codes:
 Valid `--action` values are `reviewed`, `skipped`, `reacted`, `comment_drafted`, `comment_approved`, `comment_posted`, and `rejected`.
 
 ```powershell
-python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record `
+python plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record `
   --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" `
   --action comment_posted --comment "FINAL_COMMENT"
 ```
@@ -195,7 +195,7 @@ python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger
 ### Lint A Proposed Comment
 
 ```powershell
-python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json lint-comment `
+python plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json lint-comment `
   --comment "PROPOSED_COMMENT" --post-text "VISIBLE_POST_TEXT"
 ```
 
@@ -213,7 +213,7 @@ Checks include:
 ### View A Session Summary
 
 ```powershell
-python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json summary --limit 10
+python plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json summary --limit 10
 ```
 
 ### Ledger Location
@@ -237,27 +237,29 @@ linkedin-engagement-navigator/
 |-- .agents/
 |   `-- plugins/
 |       `-- marketplace.json
-|-- .codex-plugin/
-|   `-- plugin.json
-|-- assets/
-|   |-- icon.png
-|   |-- icon.svg
-|   |-- logo.png
-|   |-- logo.svg
-|   |-- screenshot-1.png
-|   `-- screenshot-1.svg
-|-- skills/
-|   `-- linkedin-auto-reaction-codex/
-|       |-- SKILL.md
-|       |-- agents/
-|       |   `-- openai.yaml
-|       |-- references/
-|       |   |-- native-machine-browser.md
-|       |   |-- comment-quality.md
-|       |   |-- session-template.md
-|       |   `-- research-notes.md
-|       `-- scripts/
-|           `-- engagement_ledger.py
+|-- plugins/
+|   `-- linkedin-engagement-navigator/
+|       |-- .codex-plugin/
+|       |   `-- plugin.json
+|       |-- assets/
+|       |   |-- icon.png
+|       |   |-- icon.svg
+|       |   |-- logo.png
+|       |   |-- logo.svg
+|       |   |-- screenshot-1.png
+|       |   `-- screenshot-1.svg
+|       `-- skills/
+|           `-- linkedin-auto-reaction-codex/
+|               |-- SKILL.md
+|               |-- agents/
+|               |   `-- openai.yaml
+|               |-- references/
+|               |   |-- native-machine-browser.md
+|               |   |-- comment-quality.md
+|               |   |-- session-template.md
+|               |   `-- research-notes.md
+|               `-- scripts/
+|                   `-- engagement_ledger.py
 |-- .gitignore
 |-- LICENSE
 `-- README.md
@@ -265,9 +267,9 @@ linkedin-engagement-navigator/
 
 ## Configuration
 
-- Adjust session budgets, scoring, and reaction mapping in `skills/linkedin-auto-reaction-codex/SKILL.md`.
+- Adjust session budgets, scoring, and reaction mapping in `plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/SKILL.md`.
 - Tune comment lint thresholds with `--min-chars`, `--max-chars`, `--min-words`, and `--max-similarity`.
-- Edit generic phrase rules in `skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` through `GENERIC_PATTERNS` and `LOW_VALUE_PHRASES`.
+- Edit generic phrase rules in `plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` through `GENERIC_PATTERNS` and `LOW_VALUE_PHRASES`.
 - Set `LINKEDIN_ENGAGEMENT_LEDGER` to keep one ledger across sessions.
 
 ## Safety Model
@@ -287,7 +289,7 @@ If you ask for fully autonomous liking or commenting, the skill refuses that mod
 
 - This repo packages the skill as a Codex plugin for local or team distribution.
 - The repo-local marketplace is intended for development and testing.
-- For wider sharing, publish the repository and point marketplace entries at the plugin root or a Git subdirectory.
+- For wider sharing, publish the repository and keep marketplace entries pointed at `./plugins/linkedin-engagement-navigator`.
 
 ## License
 
