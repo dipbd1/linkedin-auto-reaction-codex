@@ -1,123 +1,176 @@
 # LinkedIn Auto Reaction Codex
 
-A **human-in-the-loop** Codex skill for reviewing LinkedIn in the native Windows or macOS Codex app using the user's machine browser through `@browser` or `@computer`, drafting contextual comments, and avoiding duplicate engagement without scraping, automation, or bypassing the platform.
+A human-in-the-loop Codex skill for reviewing LinkedIn posts, finding worthwhile engagement opportunities, drafting contextual comments, and avoiding duplicate interactions.
 
-> **This skill never publishes anything on its own.** It reviews, scores, drafts, and lints. You explicitly approve every final reaction or comment click in chat.
+It works through your normal machine browser with `@browser` or `@computer`. It does not scrape LinkedIn, call hidden APIs, copy cookies, bypass platform protections, or publish anything without your explicit approval.
 
----
+> This skill reviews, scores, drafts, and lints. You approve every final reaction or comment before anything visible is clicked.
 
-## What it does
+## Install On Your Machine
 
-- Opens only the LinkedIn URL you give it (feed, search, hashtag, company, profile activity, or a specific post) in your normal machine browser via `@browser`, reusing your existing logged-in session when available.
-- Scans **one viewport at a time** and surfaces at most 3 candidate posts per scroll.
-- Scores each candidate 0–10 against a transparent rubric (topic fit, author relevance, comment opening, recency, etc.).
+### Requirements
+
+- Native Codex app on Windows or macOS.
+- A browser session where you can manually log in to LinkedIn.
+- Python 3 only if you want to run the ledger CLI yourself. The script uses the Python standard library only.
+
+### Windows
+
+From this repository root, run:
+
+```powershell
+$SkillDir = "$env:USERPROFILE\.agents\skills\linkedin-auto-reaction-codex"
+New-Item -ItemType Directory -Force $SkillDir | Out-Null
+Copy-Item -Path ".\*" -Destination $SkillDir -Recurse -Force
+```
+
+Then restart Codex so it can discover the skill.
+
+If you downloaded the project somewhere else, first open PowerShell inside that folder, then run the same commands.
+
+### macOS
+
+From this repository root, run:
+
+```bash
+mkdir -p ~/.agents/skills/linkedin-auto-reaction-codex
+cp -R ./* ~/.agents/skills/linkedin-auto-reaction-codex/
+```
+
+Then restart Codex so it can discover the skill.
+
+### Verify The Install
+
+Make sure `SKILL.md` is directly inside:
+
+```text
+~/.agents/skills/linkedin-auto-reaction-codex/
+```
+
+On Windows, that is:
+
+```text
+C:\Users\<you>\.agents\skills\linkedin-auto-reaction-codex\
+```
+
+Start a new Codex chat and ask something like:
+
+```text
+Review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
+```
+
+Codex should route the request through this skill.
+
+## Quick Start
+
+Give Codex a LinkedIn destination and a goal:
+
+```text
+Review this LinkedIn post URL and draft one specific comment. Do not submit it.
+```
+
+Or:
+
+```text
+Scan my LinkedIn feed for up to 3 posts about MLOps that are worth commenting on.
+```
+
+The skill will open or reuse LinkedIn in your browser, inspect one visible viewport at a time, score candidate posts, draft grounded comments, run the comment linter, and show you an approval card before any final click.
+
+## Why Use This
+
+- Human approval for every final LinkedIn action.
+- Local JSON ledger to prevent duplicate reactions or comments.
+- Comment linter that blocks generic praise and repetitive replies.
+- Conservative session limits that keep the workflow focused.
+- Visible-browser-only workflow. No hidden browser, no scraping, no credential handling.
+
+## What It Does
+
+- Opens only the LinkedIn URL or page you provide: feed, search, hashtag, company page, profile activity, or a specific post.
+- Reuses your existing logged-in browser session when available.
+- Reviews one viewport at a time and surfaces at most 3 candidate posts per scroll.
+- Scores each candidate from 0 to 10 using a transparent relevance rubric.
 - Drafts at most one concise, post-grounded comment per candidate.
-- Lints every draft against generic-phrase blocklists, hashtag/emoji limits, post-text grounding, and similarity to your previous comments.
-- Shows a compact **approval card** before any final UI click.
-- Records every reviewed / skipped / drafted / reacted / commented action in a local JSON ledger so the same post never gets engaged twice.
+- Checks every draft against length, hashtag, generic phrase, post-grounding, and similarity rules.
+- Records reviewed, skipped, drafted, reacted, and commented actions in a local ledger.
 
-## What it deliberately won't do
+## What It Will Not Do
 
-- No credential prompts, no scraping, no Voyager / hidden APIs, no copied cookies, no hidden or remote automation browser.
-- No CAPTCHA solving, no stealth, no proxy or fingerprint evasion.
-- No bulk activity, no infinite scroll, no exporting profiles / contacts / messages.
-- No automatic reactions, comments, connects, follows, reposts, shares, or sends. You approve each one in chat.
-- No generic praise ("great post", "thanks for sharing", "very insightful", …) — these are blocked by the linter.
+- Ask for LinkedIn credentials.
+- Scrape LinkedIn or use Voyager, hidden APIs, copied cookies, proxies, stealth, or fingerprint evasion.
+- Solve CAPTCHAs or bypass verification screens.
+- Run bulk activity, infinite scroll, profile exports, contact exports, or message exports.
+- Automatically react, comment, connect, follow, repost, share, or send messages.
+- Submit generic comments such as "great post", "thanks for sharing", or "very insightful".
 
-## Session budget (defaults)
+## How It Works
 
-Conservative per-session caps to keep behavior human-paced:
+1. Codex opens or reuses LinkedIn in your machine browser through `@browser`, with `@computer` as a fallback for native UI.
+2. The skill initializes a local ledger at `.linkedin_engagement_ledger.json`, unless you configure another path.
+3. It scans the current viewport and builds a short list of candidate posts.
+4. It checks each candidate against the ledger to avoid duplicate engagement.
+5. It scores relevant posts and drafts comments only for strong candidates.
+6. It lints each draft before showing it to you.
+7. It displays an approval card.
+8. It waits for your explicit approval before clicking any final reaction or comment button.
+9. It records the approved action in the local ledger.
 
-| Limit                                       | Default |
-|---------------------------------------------|---------|
-| Posts reviewed                              | 20      |
-| Comments drafted                            | 5       |
-| Reactions approved/performed                | 3       |
-| Comments approved/posted                    | 2       |
-| Engagement actions per author               | 1       |
-| Stop after consecutive low-relevance screens| 3       |
+Example approval card:
 
-Override by telling the agent stricter limits at the start of a session.
-
----
-
-## Folder layout
-
-```
-linkedin-auto-reaction-codex/
-├── SKILL.md                  # entry point Codex loads (frontmatter + rules)
-├── README.md                 # this file (for humans)
-├── agents/
-│   └── openai.yaml           # display name and product targeting
-├── references/               # extended docs the agent reads on demand
-│   ├── native-machine-browser.md # @browser/@computer workflow
-│   ├── comment-quality.md    # drafting/linting examples
-│   ├── session-template.md   # runtime templates for small models
-│   └── research-notes.md     # design notes
-└── scripts/
-    └── engagement_ledger.py  # local ledger + comment linter CLI
+```text
+Candidate 1
+post: Jane Doe | 3h | MLOps observability | 8/10
+why: concrete data point on drift detection, opening for use-case angle
+digest: short visible summary of the post
+action: react=Insightful comment=yes
+comment: "This is a specific, grounded draft based on the post."
+checks: dedupe=pass, lint=pass, risk=low
+reply: approve 1 / edit 1: ... / skip 1
 ```
 
-## Installation
+Nothing is clicked until you reply with an approval such as `approve 1`.
 
-1. Copy the entire `linkedin-auto-reaction-codex/` folder into your Codex skills directory:
-   - Windows: `C:\Users\<you>\.agents\skills\linkedin-auto-reaction-codex\`
-2. Make sure `SKILL.md` sits at the root of that folder (not nested).
-3. Restart the Codex app so the skill is picked up.
-4. Confirm Codex shows it as available; trigger it by asking for help with LinkedIn engagement.
+## Session Limits
 
-No `pip install` is needed — `scripts/engagement_ledger.py` uses only Python's standard library.
+Default per-session limits are intentionally conservative:
 
-> On Windows Codex desktop, `python` may not be on PATH. If `python` fails, use the bundled Python executable that `load_workspace_dependencies` reports and substitute it for `python` in every command below.
+- Review up to 20 visible posts.
+- Draft up to 5 comments.
+- Perform up to 3 approved reactions.
+- Post up to 2 approved comments.
+- Perform at most 1 engagement action per author.
+- Stop after 3 consecutive low-relevance screens.
 
-## How to use it
+You can ask for stricter limits at the start of a session.
 
-Just start a chat with Codex and describe what you want, for example:
+## Ledger CLI
 
-- "Review my LinkedIn feed and find 3 posts worth commenting on about MLOps."
-- "Here's a post URL: <link>. Draft a comment grounded in the post, don't submit."
-- "Scan this hashtag page, score the top viewport, propose reactions only."
+`scripts/engagement_ledger.py` is the skill's local memory and comment quality gate. Codex calls it during the workflow, and you can also run it manually.
 
-The skill will:
+No package install is required:
 
-1. Open / reuse a LinkedIn tab in your machine browser using `@browser`, with `@computer` as a fallback for native UI.
-2. Initialize a local ledger at `.linkedin_engagement_ledger.json` (configurable).
-3. Scan one viewport, score candidates, dedupe against the ledger.
-4. Draft + lint comments for anything that passes the rubric.
-5. Show an approval card like:
+```powershell
+python scripts/engagement_ledger.py --help
+```
 
-   ```
-   Candidate 1
-   post: Jane Doe | 3h | MLOps observability | 8/10
-   why: concrete data point on drift detection, opening for use-case angle
-   digest: ...
-   action: react=Insightful comment=yes
-   comment: "..."
-   checks: dedupe=pass, lint=pass, risk=low
-   reply: approve 1 / edit 1: ... / skip 1
-   ```
+On some Windows Codex setups, `python` may not be on `PATH`. If it fails, use the Python executable reported by Codex dependency setup and substitute it for `python` in the examples below.
 
-6. Wait. Nothing is clicked until you reply `approve 1` (or similar).
-7. After an approved click, record it in the ledger and move on.
-
----
-
-## The ledger CLI (`scripts/engagement_ledger.py`)
-
-The script is the skill's **memory and quality gate**. The agent calls it between browser steps; you can also call it directly.
-
-### Check whether a post is already handled
+### Check Whether A Post Is Already Handled
 
 ```powershell
 python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json check `
   --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" --action comment
 ```
 
-Exit codes: `0` = ok to proceed, `2` = skip (already engaged / previously skipped).
+Exit codes:
 
-### Record an action
+- `0`: ok to proceed.
+- `2`: skip because it was already handled or previously skipped.
 
-Valid `--action` values: `reviewed`, `skipped`, `reacted`, `comment_drafted`, `comment_approved`, `comment_posted`, `rejected`.
+### Record An Action
+
+Valid `--action` values are `reviewed`, `skipped`, `reacted`, `comment_drafted`, `comment_approved`, `comment_posted`, and `rejected`.
 
 ```powershell
 python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record `
@@ -125,48 +178,80 @@ python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json re
   --action comment_posted --comment "FINAL_COMMENT"
 ```
 
-### Lint a proposed comment
+### Lint A Proposed Comment
 
 ```powershell
 python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json lint-comment `
   --comment "PROPOSED_COMMENT" --post-text "VISIBLE_POST_TEXT"
 ```
 
-Returns a JSON object with `pass`, `score` (0–100), `flags`, and rewrite hints. Exit code `3` = lint failed.
+The command returns JSON with `pass`, `score`, `flags`, and rewrite hints. Exit code `3` means the comment failed the lint checks.
 
-Checks include: length / word count, hashtag count, emoji-only, generic-phrase blocklist, ≥1 ≥5-char token overlap with the post text, and ≥0.82 similarity to any prior comment in the ledger.
+Checks include:
 
-### Session summary
+- Character and word count.
+- Hashtag count.
+- Emoji-only comments.
+- Generic phrase blocklist.
+- At least one meaningful token overlap with the visible post text.
+- Similarity to prior comments in the ledger.
+
+### View A Session Summary
 
 ```powershell
 python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json summary --limit 10
 ```
 
-### Where the ledger lives
+### Ledger Location
 
-By default: `.linkedin_engagement_ledger.json` in the current working directory.
-Override globally with the `LINKEDIN_ENGAGEMENT_LEDGER` environment variable, or per-call with `--ledger PATH`. Use a durable path (e.g. in your user folder) if you run sessions across days — it's how the skill avoids re-commenting on posts you already engaged with weeks ago.
+By default, the ledger is stored at:
 
-The ledger stores only minimal metadata the agent passes in: post ID (derived from the LinkedIn `activity:` URN or a hash of `author + snippet`), author string, URL, a ≤500-char snippet, an action list, and an event log. No DOM dumps, no cookies, no private LinkedIn data.
+```text
+.linkedin_engagement_ledger.json
+```
 
----
+You can override it globally with `LINKEDIN_ENGAGEMENT_LEDGER` or per command with `--ledger PATH`.
 
-## Safety summary
+Use a durable path, such as a file in your user folder, if you run sessions across multiple days. The ledger is how the skill avoids re-commenting on posts you already handled.
 
-This skill exists because LinkedIn explicitly restricts unauthorized automation, scraping, and inauthentic engagement. It is designed so that:
+The ledger stores only minimal metadata passed by the agent: post ID, author string, URL, a short snippet, action history, and event log. It does not store DOM dumps, cookies, credentials, or private LinkedIn data.
 
-- Every visible UI click is approved by you in chat.
-- The agent stops on CAPTCHA, verification, restriction, login challenge, or rate-limit notice.
-- No data leaves your machine; the ledger is a local JSON file.
-- The comment linter blocks the cliché phrases that get accounts flagged for inauthentic activity.
+## Project Structure
 
-If you ask for fully autonomous liking/commenting, the skill is instructed to refuse and fall back to assisted mode (draft + approval cards).
+```text
+linkedin-auto-reaction-codex/
+├── SKILL.md
+├── README.md
+├── agents/
+│   └── openai.yaml
+├── references/
+│   ├── native-machine-browser.md
+│   ├── comment-quality.md
+│   ├── session-template.md
+│   └── research-notes.md
+└── scripts/
+    └── engagement_ledger.py
+```
 
-## Customizing behavior
+## Configuration
 
-- Tighten or loosen lint thresholds via `--min-chars`, `--max-chars`, `--min-words`, `--max-similarity` on `lint-comment`.
-- Edit the generic-phrase blocklist in `scripts/engagement_ledger.py` (`GENERIC_PATTERNS`, `LOW_VALUE_PHRASES`).
-- Adjust session budgets, scoring rubric, or reaction mapping by editing `SKILL.md` directly — Codex will pick up the new rules on the next session.
+- Adjust session budgets, scoring, and reaction mapping in `SKILL.md`.
+- Tune comment lint thresholds with `--min-chars`, `--max-chars`, `--min-words`, and `--max-similarity`.
+- Edit generic phrase rules in `scripts/engagement_ledger.py` through `GENERIC_PATTERNS` and `LOW_VALUE_PHRASES`.
+- Set `LINKEDIN_ENGAGEMENT_LEDGER` to keep one ledger across sessions.
+
+## Safety Model
+
+This project is designed for assisted engagement, not autonomous LinkedIn automation.
+
+- Every visible UI action requires your approval in chat.
+- The workflow stops on CAPTCHA, verification, warnings, restrictions, login challenges, or rate-limit notices.
+- LinkedIn credentials are never requested.
+- The browser session stays on your machine.
+- The ledger is local JSON.
+- The comment linter blocks low-effort, repetitive, and inauthentic drafts.
+
+If you ask for fully autonomous liking or commenting, the skill refuses that mode and falls back to draft-and-approve assistance.
 
 ## License
 
