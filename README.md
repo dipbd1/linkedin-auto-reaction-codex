@@ -40,6 +40,11 @@ https://github.com/dipbd1/linkedin-auto-reaction-codex
 
 If Codex asks you to restart after adding the marketplace, restart Codex and return to **Plugins**.
 
+<img width="1193" height="825" alt="image" src="https://github.com/user-attachments/assets/00fa29be-c0a5-4a37-a7d9-2cc5cf43e8b0" />
+
+<img width="1192" height="1175" alt="image" src="https://github.com/user-attachments/assets/f0b0f89e-edd8-4d6e-ac22-96536adc1750" />
+
+
 ### 3. Start A New Chat
 
 After installation, start a new Codex chat and try:
