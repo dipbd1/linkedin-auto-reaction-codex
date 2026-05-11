@@ -1,7 +1,7 @@
 {
   "name": "local-linkedin-plugins",
   "interface": {
-    "displayName": "Local LinkedIn Plugins"
+    "displayName": "LinkedIn Engagement Plugins"
   },
   "plugins": [
     {

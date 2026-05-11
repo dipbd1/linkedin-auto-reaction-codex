@@ -1,21 +1,95 @@
 # LinkedIn Auto Reaction Codex
 
-A Codex plugin that bundles a LinkedIn engagement skill, marketplace metadata, install-surface assets, and a local ledger CLI for duplicate prevention.
+A Codex plugin for reviewing LinkedIn in your signed-in Chrome session, drafting grounded comments, and preventing duplicate engagement.
 
 It works through your signed-in Chrome browser using the Codex Chrome plugin/extension, with `@computer` only as a fallback for visible native UI. It does not scrape LinkedIn, call hidden APIs, copy cookies, bypass platform protections, or publish anything without your explicit approval.
 
 > This plugin reviews, scores, drafts, and lints. You approve every final reaction or comment before anything visible is clicked.
 
-## Plugin Package
+## Install In Codex
 
-This repository is packaged as a Codex plugin, not just a raw skill folder.
+Use this path if you just want the plugin installed. No build step, package install, or Python setup is required.
 
-- Plugin manifest: `plugins/linkedin-engagement-navigator/.codex-plugin/plugin.json`
-- Repo-local marketplace: `.agents/plugins/marketplace.json`
-- Bundled skill: `plugins/linkedin-engagement-navigator/skills/linkedin-auto-reaction-codex/`
-- Install assets: `plugins/linkedin-engagement-navigator/assets/icon.png`, `plugins/linkedin-engagement-navigator/assets/logo.png`, `plugins/linkedin-engagement-navigator/assets/screenshot-1.png`
+### 1. Install The Chrome Plugin
 
-Codex uses the plugin manifest to render the plugin card and the marketplace entry to discover and install it.
+This LinkedIn plugin needs the Codex Chrome plugin because it works inside your real signed-in browser session.
+
+1. Open Codex.
+2. Go to **Plugins**.
+3. Install and enable **Chrome**.
+4. Follow the setup flow until the Chrome extension is connected.
+5. Open Chrome, sign in to LinkedIn, and confirm the Codex extension says it is connected.
+
+Setup guide: [Codex Chrome extension](https://developers.openai.com/codex/app/chrome-extension)
+
+### 2. Add This Plugin Marketplace
+
+In Codex:
+
+1. Go to **Plugins**.
+2. Choose **Add marketplace** or **Add plugin source**.
+3. Paste this repository URL:
+
+```text
+https://github.com/dipbd1/linkedin-auto-reaction-codex
+```
+
+4. Add the marketplace.
+5. Open **LinkedIn Engagement Plugins**.
+6. Install **LinkedIn Auto Reaction Codex**.
+
+If Codex asks you to restart after adding the marketplace, restart Codex and return to **Plugins**.
+
+### 3. Start A New Chat
+
+After installation, start a new Codex chat and try:
+
+```text
+@Chrome review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
+```
+
+Codex should use the installed LinkedIn engagement skill and ask for your approval before any final LinkedIn action.
+
+## Quick Checklist
+
+- Codex desktop app is installed.
+- Chrome plugin is installed in Codex.
+- Codex Chrome extension is connected.
+- You are signed in to LinkedIn in Chrome.
+- **LinkedIn Auto Reaction Codex** is installed from **LinkedIn Engagement Plugins**.
+
+## Troubleshooting Install
+
+### I do not see "LinkedIn Engagement Plugins"
+
+Restart Codex once after adding the marketplace. If it still does not appear, remove the marketplace and add it again with the repository URL:
+
+```text
+https://github.com/dipbd1/linkedin-auto-reaction-codex
+```
+
+### I see the marketplace but not the plugin
+
+Make sure the marketplace source is the repository root, not a subfolder. The repository contains `.agents/plugins/marketplace.json`, which tells Codex where the plugin package lives.
+
+### The plugin installs but does not control LinkedIn
+
+Check the Chrome setup:
+
+1. Chrome is open.
+2. You are signed in to LinkedIn.
+3. The Codex Chrome extension says **Connected**.
+4. Codex has permission to use `linkedin.com` for the current chat.
+
+### Advanced CLI Install
+
+Most people should use the Codex app flow above. If the UI flow is unavailable, you can add the marketplace from a terminal:
+
+```powershell
+codex plugin marketplace add https://github.com/dipbd1/linkedin-auto-reaction-codex
+```
+
+Then restart Codex, open **Plugins**, choose **LinkedIn Engagement Plugins**, and install **LinkedIn Auto Reaction Codex**.
 
 ## Requirements
 
@@ -23,56 +97,6 @@ Codex uses the plugin manifest to render the plugin card and the marketplace ent
 - Google Chrome with the Codex Chrome plugin/extension installed, enabled, and connected.
 - A Chrome session where you can manually log in to LinkedIn.
 - Python 3 only if you want to run the ledger CLI yourself. The script uses the Python standard library only.
-
-## Set Up Codex Chrome First
-
-This plugin needs the Codex Chrome plugin/extension because LinkedIn review must happen in your signed-in browser session.
-
-1. Open Codex and go to **Plugins**.
-2. Add and enable the **Chrome** plugin.
-3. Follow the setup flow until the Chrome extension is installed or connected.
-4. Open Chrome and confirm the Codex extension shows **Connected**.
-5. When Codex asks for website access, allow `linkedin.com` for the current chat or always allow it if you are comfortable with that.
-
-Setup guide: [Codex Chrome extension](https://developers.openai.com/codex/app/chrome-extension)
-
-If the Chrome plugin is not active or the extension is disconnected, the bundled skill can still draft from text you paste into chat, but it cannot properly review LinkedIn pages in your signed-in browser.
-
-## Install The Plugin
-
-### Repo-local install
-
-If you open this repository in Codex, the repo-local marketplace at `.agents/plugins/marketplace.json` should make the plugin available after a restart.
-
-1. Open this repository in Codex.
-2. Restart Codex if it was already open.
-3. Open the **Plugins** directory or marketplace picker.
-4. Choose **Local LinkedIn Plugins**.
-5. Install **LinkedIn Auto Reaction Codex**.
-
-### Add this repo as a marketplace source
-
-If you want Codex to track this repository as a local plugin marketplace source, use the Codex CLI against the repository root:
-
-```powershell
-codex plugin marketplace add "C:\path\to\linkedin-engagement-navigator"
-```
-
-Then restart Codex, open the plugin directory, choose the added marketplace, and install the plugin.
-
-## Verify The Install
-
-After installation:
-
-1. Open the plugin card for **LinkedIn Auto Reaction Codex**.
-2. Confirm the card shows the plugin name, description, icon, and screenshot.
-3. Start a new Codex chat and ask:
-
-```text
-@Chrome review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
-```
-
-Codex should route the request through the bundled `linkedin-auto-reaction-codex` skill.
 
 ## Quick Start
 
@@ -285,11 +309,12 @@ This project is designed for assisted engagement, not autonomous LinkedIn automa
 
 If you ask for fully autonomous liking or commenting, the skill refuses that mode and falls back to draft-and-approve assistance.
 
-## Distribution Notes
+## Maintainer Notes
 
-- This repo packages the skill as a Codex plugin for local or team distribution.
-- The repo-local marketplace is intended for development and testing.
-- For wider sharing, publish the repository and keep marketplace entries pointed at `./plugins/linkedin-engagement-navigator`.
+- Codex discovers this repository through `.agents/plugins/marketplace.json`.
+- The marketplace entry points at `./plugins/linkedin-engagement-navigator`.
+- The plugin manifest lives at `plugins/linkedin-engagement-navigator/.codex-plugin/plugin.json`.
+- After changing plugin metadata, commit and push the repository so users can upgrade the marketplace from Codex.
 
 ## License
 
