@@ -1,0 +1,11 @@
+interface:
+  display_name: LinkedIn Auto Reaction Codex
+  short_description: Review LinkedIn in the Windows Codex app Browser, draft approved
+    comments, and avoid duplicate engagement.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
