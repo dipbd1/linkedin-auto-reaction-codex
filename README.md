@@ -1,3 +1,6 @@
+<img width="1254" height="1254" alt="ChatGPT Image May 12, 2026, 01_29_17 AM" src="https://github.com/user-attachments/assets/98602dd6-a5e8-45fa-bb1d-235386546ab3" />
+
+
 # LinkedIn Auto Reaction Codex
 
 A Codex plugin for reviewing LinkedIn in your signed-in Chrome session, drafting grounded comments, and preventing duplicate engagement.
