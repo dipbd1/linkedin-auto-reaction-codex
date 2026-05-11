@@ -13,14 +13,14 @@ Design implication:
 - Do not use hidden APIs, scraping, stealth, proxies, CAPTCHA-solving, or bulk activity.
 - Stop on warnings or restrictions.
 
-## Native machine browser reliability
+## Codex Chrome reliability
 
-The native Windows and macOS Codex apps can operate the user's machine browser through `@browser`, with `@computer` available for OS-level fallback. This is the preferred browser surface for this skill because it can reuse the user's visible browser session and existing LinkedIn login instead of launching a separate automation-only browser.
+The native Windows and macOS Codex apps can operate the user's signed-in Chrome browser through the Codex Chrome plugin/extension, with `@computer` available for OS-level fallback. This is the required browser surface for this skill because it can reuse the user's visible Chrome session and existing LinkedIn login instead of launching a separate automation-only browser.
 
 Design implication:
 
-- Use `@browser` for normal page work and `@computer` only for native UI fallback.
-- Prefer the currently selected/logged-in tab.
+- Use the Codex Chrome plugin/extension for normal page work and `@computer` only for native UI fallback.
+- Prefer the currently selected/logged-in Chrome tab.
 - Inspect DOM snapshots or screenshots after every UI change.
 - Prefer role/text/label locators.
 - Do not hard-code LinkedIn DOM classes or generated ids.

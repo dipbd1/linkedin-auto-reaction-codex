@@ -2,7 +2,7 @@
 
 A human-in-the-loop Codex skill for reviewing LinkedIn posts, finding worthwhile engagement opportunities, drafting contextual comments, and avoiding duplicate interactions.
 
-It works through your normal machine browser with `@browser` or `@computer`. It does not scrape LinkedIn, call hidden APIs, copy cookies, bypass platform protections, or publish anything without your explicit approval.
+It works through your signed-in Chrome browser using the Codex Chrome plugin/extension, with `@computer` only as a fallback for visible native UI. It does not scrape LinkedIn, call hidden APIs, copy cookies, bypass platform protections, or publish anything without your explicit approval.
 
 > This skill reviews, scores, drafts, and lints. You approve every final reaction or comment before anything visible is clicked.
 
@@ -11,8 +11,23 @@ It works through your normal machine browser with `@browser` or `@computer`. It 
 ### Requirements
 
 - Native Codex app on Windows or macOS.
-- A browser session where you can manually log in to LinkedIn.
+- Google Chrome with the Codex Chrome plugin/extension installed, enabled, and connected.
+- A Chrome session where you can manually log in to LinkedIn.
 - Python 3 only if you want to run the ledger CLI yourself. The script uses the Python standard library only.
+
+### Set Up Codex Chrome First
+
+This skill needs the Codex Chrome plugin/extension to work properly because LinkedIn requires your signed-in browser state. Set it up before using the skill:
+
+1. Open Codex and go to **Plugins**.
+2. Add and enable the **Chrome** plugin.
+3. Follow the setup flow until the Chrome extension is installed or connected.
+4. Open Chrome and confirm the Codex extension shows **Connected**.
+5. When Codex asks for website access, allow `linkedin.com` for the current chat or always allow it if you are comfortable with that.
+
+Setup guide: [Codex Chrome extension](https://developers.openai.com/codex/app/chrome-extension)
+
+If the Chrome plugin is not active or the extension is disconnected, the skill can still draft from text you paste into chat, but it cannot properly review LinkedIn pages in your signed-in browser.
 
 ### Windows
 
@@ -56,7 +71,7 @@ C:\Users\<you>\.agents\skills\linkedin-auto-reaction-codex\
 Start a new Codex chat and ask something like:
 
 ```text
-Review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
+@Chrome review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
 ```
 
 Codex should route the request through this skill.
@@ -66,16 +81,16 @@ Codex should route the request through this skill.
 Give Codex a LinkedIn destination and a goal:
 
 ```text
-Review this LinkedIn post URL and draft one specific comment. Do not submit it.
+@Chrome review this LinkedIn post URL and draft one specific comment. Do not submit it.
 ```
 
 Or:
 
 ```text
-Scan my LinkedIn feed for up to 3 posts about MLOps that are worth commenting on.
+@Chrome scan my LinkedIn feed for up to 3 posts about MLOps that are worth commenting on.
 ```
 
-The skill will open or reuse LinkedIn in your browser, inspect one visible viewport at a time, score candidate posts, draft grounded comments, run the comment linter, and show you an approval card before any final click.
+The skill will open or reuse LinkedIn in Chrome, inspect one visible viewport at a time, score candidate posts, draft grounded comments, run the comment linter, and show you an approval card before any final click.
 
 ## Why Use This
 
@@ -83,12 +98,13 @@ The skill will open or reuse LinkedIn in your browser, inspect one visible viewp
 - Local JSON ledger to prevent duplicate reactions or comments.
 - Comment linter that blocks generic praise and repetitive replies.
 - Conservative session limits that keep the workflow focused.
-- Visible-browser-only workflow. No hidden browser, no scraping, no credential handling.
+- Chrome-extension-backed visible browser workflow. No hidden browser, no scraping, no credential handling.
 
 ## What It Does
 
 - Opens only the LinkedIn URL or page you provide: feed, search, hashtag, company page, profile activity, or a specific post.
-- Reuses your existing logged-in browser session when available.
+- Uses the Codex Chrome plugin/extension for signed-in LinkedIn browser work.
+- Reuses your existing logged-in Chrome session when available.
 - Reviews one viewport at a time and surfaces at most 3 candidate posts per scroll.
 - Scores each candidate from 0 to 10 using a transparent relevance rubric.
 - Drafts at most one concise, post-grounded comment per candidate.
@@ -106,7 +122,7 @@ The skill will open or reuse LinkedIn in your browser, inspect one visible viewp
 
 ## How It Works
 
-1. Codex opens or reuses LinkedIn in your machine browser through `@browser`, with `@computer` as a fallback for native UI.
+1. Codex opens or reuses LinkedIn in Chrome through the Codex Chrome plugin/extension, with `@computer` as a fallback for native UI.
 2. The skill initializes a local ledger at `.linkedin_engagement_ledger.json`, unless you configure another path.
 3. It scans the current viewport and builds a short list of candidate posts.
 4. It checks each candidate against the ledger to avoid duplicate engagement.
