@@ -1,0 +1,14 @@
+interface:
+  display_name: LinkedIn Auto Reaction Codex
+  short_description: Review LinkedIn in Codex Chrome, draft approved comments, and avoid duplicate engagement.
+  icon_small: ../../assets/icon.svg
+  icon_large: ../../assets/logo.svg
+  brand_color: "#0A66C2"
+  default_prompt: Review my LinkedIn feed and draft grounded comments for relevant posts. Do not submit anything without my approval.
+policy:
+  products:
+    - chatgpt
+    - codex
+    - api
+    - atlas
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="LinkedIn Auto Reaction Codex icon">
+  <rect width="256" height="256" rx="56" fill="#0A66C2"/>
+  <rect x="34" y="34" width="188" height="188" rx="34" fill="#084B8A"/>
+  <circle cx="86" cy="86" r="18" fill="#E8F3FF"/>
+  <rect x="70" y="114" width="32" height="72" rx="12" fill="#E8F3FF"/>
+  <path d="M130 116c0-8 6-14 14-14h4c8 0 14 6 14 14v70h-30z" fill="#E8F3FF"/>
+  <path d="M162 132c0-12 10-22 22-22h1c12 0 22 10 22 22v54h-30v-42c0-4-4-8-8-8s-7 4-7 8v42h-30z" fill="#E8F3FF"/>
+  <path d="M164 64l38 19-38 19 9-19z" fill="#7FD0FF"/>
+</svg>

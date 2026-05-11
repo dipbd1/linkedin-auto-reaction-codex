@@ -1,0 +1,20 @@
+{
+  "name": "local-linkedin-plugins",
+  "interface": {
+    "displayName": "Local LinkedIn Plugins"
+  },
+  "plugins": [
+    {
+      "name": "linkedin-engagement-navigator",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "linkedin-engagement-navigator",
+  "version": "0.1.0",
+  "description": "Human-in-the-loop LinkedIn engagement workflow for Codex using the signed-in Chrome session.",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "plugin",
+    "linkedin",
+    "engagement",
+    "browser"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "LinkedIn Auto Reaction Codex",
+    "shortDescription": "Review LinkedIn in Chrome, draft approved comments, and avoid duplicate engagement.",
+    "longDescription": "Human-in-the-loop LinkedIn engagement assistant for Codex that reviews visible posts in your signed-in Chrome session, drafts grounded comments, and waits for explicit approval before any final action.",
+    "developerName": "Dip",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Review my LinkedIn feed and draft comments for AI engineering posts. Do not submit anything.",
+      "Open this LinkedIn post and draft one grounded comment. Wait for my approval before any final click."
+    ],
+    "brandColor": "#0A66C2",
+    "composerIcon": "./assets/icon.svg",
+    "logo": "./assets/logo.svg",
+    "screenshots": [
+      "./assets/screenshot-1.svg"
+    ]
+  }
+}

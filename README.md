@@ -1,23 +1,32 @@
 # LinkedIn Auto Reaction Codex
 
-A human-in-the-loop Codex skill for reviewing LinkedIn posts, finding worthwhile engagement opportunities, drafting contextual comments, and avoiding duplicate interactions.
+A Codex plugin that bundles a LinkedIn engagement skill, marketplace metadata, install-surface assets, and a local ledger CLI for duplicate prevention.
 
 It works through your signed-in Chrome browser using the Codex Chrome plugin/extension, with `@computer` only as a fallback for visible native UI. It does not scrape LinkedIn, call hidden APIs, copy cookies, bypass platform protections, or publish anything without your explicit approval.
 
-> This skill reviews, scores, drafts, and lints. You approve every final reaction or comment before anything visible is clicked.
+> This plugin reviews, scores, drafts, and lints. You approve every final reaction or comment before anything visible is clicked.
 
-## Install On Your Machine
+## Plugin Package
 
-### Requirements
+This repository is packaged as a Codex plugin, not just a raw skill folder.
+
+- Plugin manifest: `.codex-plugin/plugin.json`
+- Repo-local marketplace: `.agents/plugins/marketplace.json`
+- Bundled skill: `skills/linkedin-auto-reaction-codex/`
+- Install assets: `assets/icon.svg`, `assets/logo.svg`, `assets/screenshot-1.svg`
+
+Codex uses the plugin manifest to render the plugin card and the marketplace entry to discover and install it.
+
+## Requirements
 
 - Native Codex app on Windows or macOS.
 - Google Chrome with the Codex Chrome plugin/extension installed, enabled, and connected.
 - A Chrome session where you can manually log in to LinkedIn.
 - Python 3 only if you want to run the ledger CLI yourself. The script uses the Python standard library only.
 
-### Set Up Codex Chrome First
+## Set Up Codex Chrome First
 
-This skill needs the Codex Chrome plugin/extension to work properly because LinkedIn requires your signed-in browser state. Set it up before using the skill:
+This plugin needs the Codex Chrome plugin/extension because LinkedIn review must happen in your signed-in browser session.
 
 1. Open Codex and go to **Plugins**.
 2. Add and enable the **Chrome** plugin.
@@ -27,54 +36,43 @@ This skill needs the Codex Chrome plugin/extension to work properly because Link
 
 Setup guide: [Codex Chrome extension](https://developers.openai.com/codex/app/chrome-extension)
 
-If the Chrome plugin is not active or the extension is disconnected, the skill can still draft from text you paste into chat, but it cannot properly review LinkedIn pages in your signed-in browser.
+If the Chrome plugin is not active or the extension is disconnected, the bundled skill can still draft from text you paste into chat, but it cannot properly review LinkedIn pages in your signed-in browser.
 
-### Windows
+## Install The Plugin
 
-From this repository root, run:
+### Repo-local install
+
+If you open this repository in Codex, the repo-local marketplace at `.agents/plugins/marketplace.json` should make the plugin available after a restart.
+
+1. Open this repository in Codex.
+2. Restart Codex if it was already open.
+3. Open the **Plugins** directory or marketplace picker.
+4. Choose **Local LinkedIn Plugins**.
+5. Install **LinkedIn Auto Reaction Codex**.
+
+### Add this repo as a marketplace source
+
+If you want Codex to track this repository as a local plugin marketplace source, use the Codex CLI against the repository root:
 
 ```powershell
-$SkillDir = "$env:USERPROFILE\.agents\skills\linkedin-auto-reaction-codex"
-New-Item -ItemType Directory -Force $SkillDir | Out-Null
-Copy-Item -Path ".\*" -Destination $SkillDir -Recurse -Force
+codex plugin marketplace add "C:\path\to\linkedin-engagement-navigator"
 ```
 
-Then restart Codex so it can discover the skill.
+Then restart Codex, open the plugin directory, choose the added marketplace, and install the plugin.
 
-If you downloaded the project somewhere else, first open PowerShell inside that folder, then run the same commands.
+## Verify The Install
 
-### macOS
+After installation:
 
-From this repository root, run:
-
-```bash
-mkdir -p ~/.agents/skills/linkedin-auto-reaction-codex
-cp -R ./* ~/.agents/skills/linkedin-auto-reaction-codex/
-```
-
-Then restart Codex so it can discover the skill.
-
-### Verify The Install
-
-Make sure `SKILL.md` is directly inside:
-
-```text
-~/.agents/skills/linkedin-auto-reaction-codex/
-```
-
-On Windows, that is:
-
-```text
-C:\Users\<you>\.agents\skills\linkedin-auto-reaction-codex\
-```
-
-Start a new Codex chat and ask something like:
+1. Open the plugin card for **LinkedIn Auto Reaction Codex**.
+2. Confirm the card shows the plugin name, description, icon, and screenshot.
+3. Start a new Codex chat and ask:
 
 ```text
 @Chrome review my LinkedIn feed and draft comments for posts about AI engineering. Do not submit anything.
 ```
 
-Codex should route the request through this skill.
+Codex should route the request through the bundled `linkedin-auto-reaction-codex` skill.
 
 ## Quick Start
 
@@ -90,7 +88,7 @@ Or:
 @Chrome scan my LinkedIn feed for up to 3 posts about MLOps that are worth commenting on.
 ```
 
-The skill will open or reuse LinkedIn in Chrome, inspect one visible viewport at a time, score candidate posts, draft grounded comments, run the comment linter, and show you an approval card before any final click.
+The plugin will open or reuse LinkedIn in Chrome, inspect one visible viewport at a time, score candidate posts, draft grounded comments, run the comment linter, and show you an approval card before any final click.
 
 ## Why Use This
 
@@ -123,7 +121,7 @@ The skill will open or reuse LinkedIn in Chrome, inspect one visible viewport at
 ## How It Works
 
 1. Codex opens or reuses LinkedIn in Chrome through the Codex Chrome plugin/extension, with `@computer` as a fallback for native UI.
-2. The skill initializes a local ledger at `.linkedin_engagement_ledger.json`, unless you configure another path.
+2. The bundled skill initializes a local ledger at `.linkedin_engagement_ledger.json`, unless you configure another path.
 3. It scans the current viewport and builds a short list of candidate posts.
 4. It checks each candidate against the ledger to avoid duplicate engagement.
 5. It scores relevant posts and drafts comments only for strong candidates.
@@ -162,12 +160,12 @@ You can ask for stricter limits at the start of a session.
 
 ## Ledger CLI
 
-`scripts/engagement_ledger.py` is the skill's local memory and comment quality gate. Codex calls it during the workflow, and you can also run it manually.
+`skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` is the plugin's local memory and comment quality gate. Codex calls it during the workflow, and you can also run it manually.
 
 No package install is required:
 
 ```powershell
-python scripts/engagement_ledger.py --help
+python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --help
 ```
 
 On some Windows Codex setups, `python` may not be on `PATH`. If it fails, use the Python executable reported by Codex dependency setup and substitute it for `python` in the examples below.
@@ -175,7 +173,7 @@ On some Windows Codex setups, `python` may not be on `PATH`. If it fails, use th
 ### Check Whether A Post Is Already Handled
 
 ```powershell
-python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json check `
+python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json check `
   --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" --action comment
 ```
 
@@ -189,7 +187,7 @@ Exit codes:
 Valid `--action` values are `reviewed`, `skipped`, `reacted`, `comment_drafted`, `comment_approved`, `comment_posted`, and `rejected`.
 
 ```powershell
-python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record `
+python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record `
   --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" `
   --action comment_posted --comment "FINAL_COMMENT"
 ```
@@ -197,7 +195,7 @@ python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json re
 ### Lint A Proposed Comment
 
 ```powershell
-python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json lint-comment `
+python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json lint-comment `
   --comment "PROPOSED_COMMENT" --post-text "VISIBLE_POST_TEXT"
 ```
 
@@ -215,7 +213,7 @@ Checks include:
 ### View A Session Summary
 
 ```powershell
-python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json summary --limit 10
+python skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json summary --limit 10
 ```
 
 ### Ledger Location
@@ -235,25 +233,37 @@ The ledger stores only minimal metadata passed by the agent: post ID, author str
 ## Project Structure
 
 ```text
-linkedin-auto-reaction-codex/
-├── SKILL.md
-├── README.md
-├── agents/
-│   └── openai.yaml
-├── references/
-│   ├── native-machine-browser.md
-│   ├── comment-quality.md
-│   ├── session-template.md
-│   └── research-notes.md
-└── scripts/
-    └── engagement_ledger.py
+linkedin-engagement-navigator/
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json
+├── .codex-plugin/
+│   └── plugin.json
+├── assets/
+│   ├── icon.svg
+│   ├── logo.svg
+│   └── screenshot-1.svg
+├── skills/
+│   └── linkedin-auto-reaction-codex/
+│       ├── SKILL.md
+│       ├── agents/
+│       │   └── openai.yaml
+│       ├── references/
+│       │   ├── native-machine-browser.md
+│       │   ├── comment-quality.md
+│       │   ├── session-template.md
+│       │   └── research-notes.md
+│       └── scripts/
+│           └── engagement_ledger.py
+├── LICENSE
+└── README.md
 ```
 
 ## Configuration
 
-- Adjust session budgets, scoring, and reaction mapping in `SKILL.md`.
+- Adjust session budgets, scoring, and reaction mapping in `skills/linkedin-auto-reaction-codex/SKILL.md`.
 - Tune comment lint thresholds with `--min-chars`, `--max-chars`, `--min-words`, and `--max-similarity`.
-- Edit generic phrase rules in `scripts/engagement_ledger.py` through `GENERIC_PATTERNS` and `LOW_VALUE_PHRASES`.
+- Edit generic phrase rules in `skills/linkedin-auto-reaction-codex/scripts/engagement_ledger.py` through `GENERIC_PATTERNS` and `LOW_VALUE_PHRASES`.
 - Set `LINKEDIN_ENGAGEMENT_LEDGER` to keep one ledger across sessions.
 
 ## Safety Model
@@ -269,6 +279,12 @@ This project is designed for assisted engagement, not autonomous LinkedIn automa
 
 If you ask for fully autonomous liking or commenting, the skill refuses that mode and falls back to draft-and-approve assistance.
 
+## Distribution Notes
+
+- This repo packages the skill as a Codex plugin for local or team distribution.
+- The repo-local marketplace is intended for development and testing.
+- For wider sharing, publish the repository and point marketplace entries at the plugin root or a Git subdirectory.
+
 ## License
 
-This project is licensed under the MIT License. See `LICENSE` for details.
+MIT. Use responsibly and in line with LinkedIn's User Agreement and Professional Community Policies.
