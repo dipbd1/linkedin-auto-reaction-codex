@@ -271,4 +271,4 @@ If you ask for fully autonomous liking or commenting, the skill refuses that mod
 
 ## License
 
-Personal-use skill. Use responsibly and in line with LinkedIn's User Agreement and Professional Community Policies.
+This project is licensed under the MIT License. See `LICENSE` for details.
