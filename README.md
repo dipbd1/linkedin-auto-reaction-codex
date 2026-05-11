@@ -13,7 +13,7 @@ This repository is packaged as a Codex plugin, not just a raw skill folder.
 - Plugin manifest: `.codex-plugin/plugin.json`
 - Repo-local marketplace: `.agents/plugins/marketplace.json`
 - Bundled skill: `skills/linkedin-auto-reaction-codex/`
-- Install assets: `assets/icon.svg`, `assets/logo.svg`, `assets/screenshot-1.svg`
+- Install assets: `assets/icon.png`, `assets/logo.png`, `assets/screenshot-1.png`
 
 Codex uses the plugin manifest to render the plugin card and the marketplace entry to discover and install it.
 
@@ -234,29 +234,33 @@ The ledger stores only minimal metadata passed by the agent: post ID, author str
 
 ```text
 linkedin-engagement-navigator/
-├── .agents/
-│   └── plugins/
-│       └── marketplace.json
-├── .codex-plugin/
-│   └── plugin.json
-├── assets/
-│   ├── icon.svg
-│   ├── logo.svg
-│   └── screenshot-1.svg
-├── skills/
-│   └── linkedin-auto-reaction-codex/
-│       ├── SKILL.md
-│       ├── agents/
-│       │   └── openai.yaml
-│       ├── references/
-│       │   ├── native-machine-browser.md
-│       │   ├── comment-quality.md
-│       │   ├── session-template.md
-│       │   └── research-notes.md
-│       └── scripts/
-│           └── engagement_ledger.py
-├── LICENSE
-└── README.md
+|-- .agents/
+|   `-- plugins/
+|       `-- marketplace.json
+|-- .codex-plugin/
+|   `-- plugin.json
+|-- assets/
+|   |-- icon.png
+|   |-- icon.svg
+|   |-- logo.png
+|   |-- logo.svg
+|   |-- screenshot-1.png
+|   `-- screenshot-1.svg
+|-- skills/
+|   `-- linkedin-auto-reaction-codex/
+|       |-- SKILL.md
+|       |-- agents/
+|       |   `-- openai.yaml
+|       |-- references/
+|       |   |-- native-machine-browser.md
+|       |   |-- comment-quality.md
+|       |   |-- session-template.md
+|       |   `-- research-notes.md
+|       `-- scripts/
+|           `-- engagement_ledger.py
+|-- .gitignore
+|-- LICENSE
+`-- README.md
 ```
 
 ## Configuration

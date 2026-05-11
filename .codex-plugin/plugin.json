@@ -2,6 +2,12 @@
   "name": "linkedin-engagement-navigator",
   "version": "0.1.0",
   "description": "Human-in-the-loop LinkedIn engagement workflow for Codex using the signed-in Chrome session.",
+  "author": {
+    "name": "Dip",
+    "url": "https://github.com/dipbd1"
+  },
+  "homepage": "https://github.com/dipbd1/linkedin-auto-reaction-codex#readme",
+  "repository": "https://github.com/dipbd1/linkedin-auto-reaction-codex",
   "license": "MIT",
   "keywords": [
     "codex",
@@ -21,15 +27,18 @@
       "Read",
       "Write"
     ],
+    "websiteURL": "https://github.com/dipbd1/linkedin-auto-reaction-codex",
+    "privacyPolicyURL": "https://github.com/dipbd1/linkedin-auto-reaction-codex#safety-model",
+    "termsOfServiceURL": "https://github.com/dipbd1/linkedin-auto-reaction-codex#license",
     "defaultPrompt": [
       "Review my LinkedIn feed and draft comments for AI engineering posts. Do not submit anything.",
       "Open this LinkedIn post and draft one grounded comment. Wait for my approval before any final click."
     ],
     "brandColor": "#0A66C2",
-    "composerIcon": "./assets/icon.svg",
-    "logo": "./assets/logo.svg",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
     "screenshots": [
-      "./assets/screenshot-1.svg"
+      "./assets/screenshot-1.png"
     ]
   }
 }
