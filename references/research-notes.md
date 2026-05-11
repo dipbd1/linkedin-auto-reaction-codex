@@ -13,13 +13,13 @@ Design implication:
 - Do not use hidden APIs, scraping, stealth, proxies, CAPTCHA-solving, or bulk activity.
 - Stop on warnings or restrictions.
 
-## Codex app browser reliability
+## Native machine browser reliability
 
-The Windows Codex app can operate the native in-app Browser. This is the preferred browser surface for this skill because it can reuse the visible browser session and its existing LinkedIn login instead of launching a separate automation browser. The Browser plugin also exposes Playwright-style controls through the selected in-app browser tab.
+The native Windows and macOS Codex apps can operate the user's machine browser through `@browser`, with `@computer` available for OS-level fallback. This is the preferred browser surface for this skill because it can reuse the user's visible browser session and existing LinkedIn login instead of launching a separate automation-only browser.
 
 Design implication:
 
-- Use the native in-app Browser (`iab`) rather than Browser Use CLI or a standalone Playwright browser.
+- Use `@browser` for normal page work and `@computer` only for native UI fallback.
 - Prefer the currently selected/logged-in tab.
 - Inspect DOM snapshots or screenshots after every UI change.
 - Prefer role/text/label locators.

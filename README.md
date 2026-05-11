@@ -1,6 +1,6 @@
 # LinkedIn Auto Reaction Codex
 
-A **human-in-the-loop** Codex skill for reviewing LinkedIn in the Windows Codex app's native in-app Browser, drafting contextual comments, and avoiding duplicate engagement — without scraping, automation, or bypassing the platform.
+A **human-in-the-loop** Codex skill for reviewing LinkedIn in the native Windows or macOS Codex app using the user's machine browser through `@browser` or `@computer`, drafting contextual comments, and avoiding duplicate engagement without scraping, automation, or bypassing the platform.
 
 > **This skill never publishes anything on its own.** It reviews, scores, drafts, and lints. You explicitly approve every final reaction or comment click in chat.
 
@@ -8,7 +8,7 @@ A **human-in-the-loop** Codex skill for reviewing LinkedIn in the Windows Codex 
 
 ## What it does
 
-- Opens only the LinkedIn URL you give it (feed, search, hashtag, company, profile activity, or a specific post) in Codex's in-app Browser, reusing your existing logged-in session.
+- Opens only the LinkedIn URL you give it (feed, search, hashtag, company, profile activity, or a specific post) in your normal machine browser via `@browser`, reusing your existing logged-in session when available.
 - Scans **one viewport at a time** and surfaces at most 3 candidate posts per scroll.
 - Scores each candidate 0–10 against a transparent rubric (topic fit, author relevance, comment opening, recency, etc.).
 - Drafts at most one concise, post-grounded comment per candidate.
@@ -18,7 +18,7 @@ A **human-in-the-loop** Codex skill for reviewing LinkedIn in the Windows Codex 
 
 ## What it deliberately won't do
 
-- No credential prompts, no scraping, no Voyager / hidden APIs, no copied cookies, no Playwright/CDP outside the Codex Browser plugin.
+- No credential prompts, no scraping, no Voyager / hidden APIs, no copied cookies, no hidden or remote automation browser.
 - No CAPTCHA solving, no stealth, no proxy or fingerprint evasion.
 - No bulk activity, no infinite scroll, no exporting profiles / contacts / messages.
 - No automatic reactions, comments, connects, follows, reposts, shares, or sends. You approve each one in chat.
@@ -50,7 +50,7 @@ linkedin-auto-reaction-codex/
 ├── agents/
 │   └── openai.yaml           # display name and product targeting
 ├── references/               # extended docs the agent reads on demand
-│   ├── codex-app-browser.md  # browser plugin workflow
+│   ├── native-machine-browser.md # @browser/@computer workflow
 │   ├── comment-quality.md    # drafting/linting examples
 │   ├── session-template.md   # runtime templates for small models
 │   └── research-notes.md     # design notes
@@ -80,7 +80,7 @@ Just start a chat with Codex and describe what you want, for example:
 
 The skill will:
 
-1. Open / reuse the Codex in-app Browser tab.
+1. Open / reuse a LinkedIn tab in your machine browser using `@browser`, with `@computer` as a fallback for native UI.
 2. Initialize a local ledger at `.linkedin_engagement_ledger.json` (configurable).
 3. Scan one viewport, score candidates, dedupe against the ledger.
 4. Draft + lint comments for anything that passes the rubric.

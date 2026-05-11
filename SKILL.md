@@ -1,13 +1,13 @@
 ---
 name: linkedin-auto-reaction-codex
-description: Human-in-the-loop LinkedIn engagement workflow for the Windows Codex app using the native Codex in-app Browser session. Use when asked to review LinkedIn feeds, search results, profile activity, company pages, or post URLs; identify relevant posts; avoid duplicate reactions or comments; draft contextual comments; and perform only explicitly approved visible UI actions through the logged-in browser session.
+description: Human-in-the-loop LinkedIn engagement workflow for the native Windows or macOS Codex app using the user's machine browser through @browser or @computer. Use when asked to review LinkedIn feeds, search results, profile activity, company pages, or post URLs; identify relevant posts; avoid duplicate reactions or comments; draft contextual comments; and perform only explicitly approved visible UI actions through the logged-in browser session.
 ---
 
 # LinkedIn Auto Reaction Codex
 
 ## Core behavior
 
-Use this skill to assist a LinkedIn engagement session in the Windows Codex app. Operate through the native Codex in-app Browser, using the user's existing logged-in browser session when available.
+Use this skill to assist a LinkedIn engagement session in the native Windows or macOS Codex app. Operate through the user's machine browser with `@browser` when available, and use `@computer` only when native UI interaction is needed. Prefer the user's existing logged-in browser session when available.
 
 Default to **review and draft mode**. Do not publish comments, send messages, connect, follow, repost, share, scrape, bypass limits, solve CAPTCHAs, or perform bulk activity. Only click a final reaction or submit a comment after the user explicitly approves that exact post and action in the current conversation.
 
@@ -15,7 +15,7 @@ Default to **review and draft mode**. Do not publish comments, send messages, co
 
 LinkedIn restricts unauthorized automation, scraping, automated engagement, and inauthentic activity. Therefore:
 
-1. Use the visible LinkedIn UI in the Codex in-app Browser only.
+1. Use the visible LinkedIn UI in the user's machine browser only, controlled through `@browser` or `@computer`.
 2. Prefer the currently selected browser tab/session when it is already logged in.
 3. If LinkedIn is not logged in, ask the user to log in manually in the browser. Never request credentials.
 4. Keep a human in the loop for every final engagement action.
@@ -43,7 +43,8 @@ These are not LinkedIn rate limits. They are conservative workflow limits to pre
 ## Operating loop
 
 1. **Setup**
-   - Use the Codex Browser plugin and select the native in-app browser (`iab`).
+   - Use `@browser` to open or attach to LinkedIn in the user's default machine browser.
+   - Use `@computer` only when `@browser` cannot access or operate the needed visible browser UI.
    - Reuse the selected/current browser tab if it is already on LinkedIn or already logged in.
    - Open only the target LinkedIn feed, search, hashtag, company, profile activity, or post URL supplied by the user.
    - Initialize the local ledger with `scripts/engagement_ledger.py`.
@@ -171,19 +172,20 @@ Record after approved UI action:
 python scripts/engagement_ledger.py --ledger .linkedin_engagement_ledger.json record --url "POST_URL" --author "AUTHOR" --snippet "VISIBLE_SNIPPET" --action comment_posted --comment "COMMENT"
 ```
 
-## Windows Codex app browser protocol
+## Native machine browser protocol
 
-For detailed browser instructions, read `references/codex-app-browser.md` only when operating the browser.
+For detailed browser instructions, read `references/native-machine-browser.md` only when operating the browser.
 
 Core rules:
 
-1. Use the Codex Browser plugin and the native in-app browser (`iab`).
-2. Reuse the selected tab and logged-in session when possible. Do not launch a separate Chrome, Browser Use CLI session, or standalone Playwright browser.
-3. Inspect visible page state with the Browser plugin's DOM snapshot and screenshot tools.
-4. Use user-visible locators: role, text, label, placeholder, and visible post containers. Avoid brittle CSS/XPath chains and LinkedIn generated IDs.
-5. After every scroll, click, modal open, comment panel expansion, or navigation, inspect the page again before acting.
-6. Never click a final `Post`, `Comment`, `Send`, `Share`, `Repost`, `Connect`, `Follow`, `Like`, or reaction control unless the user approved that exact action.
-7. Pasting a draft into a comment box is allowed only when the user asked for assisted drafting; stop before final submit unless approval is explicit.
+1. Use `@browser` first for navigation, DOM snapshots, screenshots, form filling, scrolling, and visible UI clicks in the user's machine browser.
+2. Use `@computer` as a fallback for OS-level browser selection, permission prompts, or visible UI controls unavailable to `@browser`.
+3. Reuse the selected tab and logged-in session when possible. Do not launch a hidden, remote, or separate automation-only browser profile.
+4. Inspect visible page state with `@browser` snapshots/screenshots, or with `@computer` screenshots when operating native UI.
+5. Use user-visible locators: role, text, label, placeholder, and visible post containers. Avoid brittle CSS/XPath chains and LinkedIn generated IDs.
+6. After every scroll, click, modal open, comment panel expansion, or navigation, inspect the page again before acting.
+7. Never click a final `Post`, `Comment`, `Send`, `Share`, `Repost`, `Connect`, `Follow`, `Like`, or reaction control unless the user approved that exact action.
+8. Pasting a draft into a comment box is allowed only when the user asked for assisted drafting; stop before final submit unless approval is explicit.
 
 ## UI traversal heuristics
 
@@ -249,7 +251,7 @@ ledger: path
 
 ## Reference files
 
-- `references/codex-app-browser.md`: Windows Codex app Browser plugin workflow for using the native logged-in browser session.
+- `references/native-machine-browser.md`: native Windows/macOS machine browser workflow using `@browser` and `@computer`.
 - `references/comment-quality.md`: comment drafting, linting, and examples.
 - `references/session-template.md`: compact runtime templates for small/medium models.
-- `references/research-notes.md`: platform, Codex Browser, and workflow design notes.
+- `references/research-notes.md`: platform, browser, and workflow design notes.

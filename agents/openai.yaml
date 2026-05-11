@@ -1,6 +1,6 @@
 interface:
   display_name: LinkedIn Auto Reaction Codex
-  short_description: Review LinkedIn in the Windows Codex app Browser, draft approved
+  short_description: Review LinkedIn in the native machine browser, draft approved
     comments, and avoid duplicate engagement.
 policy:
   products:
